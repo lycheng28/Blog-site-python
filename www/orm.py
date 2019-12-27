@@ -222,5 +222,3 @@ class FloatField(Field):
 class TextField(Field):
     def __init__(self, name=None, default=None):
         super().__init__(name,'text', False, default)
-
-#
