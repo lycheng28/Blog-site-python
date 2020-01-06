@@ -48,7 +48,7 @@ async def execute(sql, args):
         return affected
 
 # 映射信息读取
-def create_atgs_string(num):
+def create_args_string(num):
     L = []
     for n in range(num):
         L.append('?')
@@ -81,23 +81,22 @@ class ModelMetaclass(type):
             raise RuntimeError('Primary key not found.')
         for k in mappings.keys():
             attrs.pop(k)
-        secaped_fields = list(map(lambda f: '`%s`' % f, fields))
+        escaped_fields = list(map(lambda f: '`%s`' % f, fields))
         attrs['__mappings__'] = mappings #  保存属性和列的映射关系
         attrs['__table__'] = tableName
         attrs['__primary_key__'] = primaryKey # 主键属性名
         attrs['__fields__'] = fields # 除主键外的属性
         # 构造默认的SELECT， INSERT， UPDATE和DELETE语句
-        attrs['__select__'] = 'select `%s`, %s from `%s` ' % (primaryKey, ', '.join(escaped_fields), tableName)
-        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escaped_fields),
-                                                                           primaryKey, create_args_string(len(encaped_fields)+1))
+        attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escaped_fields), tableName)
+        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
         attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primaryKey)
-        attrs['__delete__'] = 'delete from `%s`=?' % (tableName, primaryKey)
+        attrs['__delete__'] = 'delete from `%s` where `%s` =?' % (tableName, primaryKey)
         return type.__new__(cls, name, bases, attrs)
 
 
 # ORM
-class Model(dict, netaclass=ModelMetaclass):
-    def __init(self, **kw):
+class Model(dict, metaclass=ModelMetaclass):
+    def __init__(self, **kw):
         super(Model, self).__init__(**kw)
 
     def __getattr__(self, key):
