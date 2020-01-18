@@ -1,4 +1,4 @@
-import json, looging, inspect, functools
+import json, logging, inspect, functools
 
 # 建立page类处理分页， 可以在page_size更改每页项目的个数
 class Page(object):

@@ -63,7 +63,7 @@ async def auth_factory(app, handler):
 # 数据处理工厂
 async def data_factory(app, handler):
     async def parse_data(request):
-        if request.method == 'POST'
+        if request.method == 'POST':
             if request.content_type.startswith('application/json'):
                 request.__data__ = await request.json()
                 logging.info('request json: %s' % str(request.__data__))
@@ -128,7 +128,7 @@ async def init(loop):
     await orm.create_pool(loop=loop, **configs.db)
     # 在handlers.py完全后，下面middlewares的list中加入auth_factory
     app = web.Application(loop=loop, middlewares=[logger_factory, response_factory, auth_factory])
-    init_jinja2(app, filters=dict(datetime=datetime=datetime_filter))
+    init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
     add_static(app)
     srv = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)
@@ -139,19 +139,3 @@ loop = asyncio.get_event_loop()
 loop.run_until_complete(init(loop))
 loop.run_forever()
 
-
-'''
-# 定义服务器应用响应请求的返回为'Awesome Website'
-async def index(request):
-    return web.Response(body=b'<h1>Awesome Website</h1>', content_type='text/html')
-
-# 建立服务器应用，持续监听本地9000端口的http请求，对首页‘/’进行响应
-def init():
-    app = web.Application()
-    app.router.add_get('/', index)
-    web.run_app(app, host='127.0.0.1', port=9000)
-
-if __name__ == '__main__':
-    init()
-'''
- 
