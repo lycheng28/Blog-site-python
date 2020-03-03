@@ -11,7 +11,7 @@ import orm
 from coroweb import add_routes, add_static
 
 # handlers 是URL处理模块，当handlers.py在api章节里完全编辑完在将下一行代码的双并号去掉
-## from handlers import cookie2user， COOKIE_NAME
+from handlers import cookie2user, COOKIE_NAME
 
 # 初始化jinja2的函数
 def init_jinja2(app, **kw):
@@ -68,7 +68,7 @@ async def data_factory(app, handler):
                 request.__data__ = await request.json()
                 logging.info('request json: %s' % str(request.__data__))
             elif request.content_type.startswith('application/x-www-form-urlencoded'):
-                request.__data__ = await reqeust.post()
+                request.__data__ = await request.post()
                 logging.info('request form: %s' % str(request.__data___))
         return (await handler(request))
     return parse_data
@@ -80,6 +80,10 @@ async def response_factory(app, handler):
         r = await handler(request)
         if isinstance(r, web.StreamResponse):
             return r
+        if isinstance(r, bytes):
+            resp = web.Response(body=r)
+            resp.content_type = 'application/octet-stream'
+            return resp
         if isinstance(r, str):
             if r.startswith('redirect:'):
                 return web.HTTPFound(r[9:])
@@ -94,7 +98,7 @@ async def response_factory(app, handler):
                 return resp
             else:
                 # 在handlers.py完成后，才生效
-                r['__user__'] = requset.__user__
+                r['__user__'] = request.__user__
                 resp = web.Response(body=app['__templating__'].get_template(template).render(**r).encode('utf-8'))
                 resp.content_type = 'text/html;charset=utf-8'
                 return resp
@@ -113,21 +117,21 @@ async def response_factory(app, handler):
 # 时间转换
 def datetime_filter(t):
     delta = int(time.time() - t)
-    if dalta < 60:
+    if delta < 60:
         return u'1分钟前'
-    if dalta < 3600:
+    if delta < 3600:
         return u'%s分钟前' % (delta // 60)
-    if dalta < 86400:
+    if delta < 86400:
         return u'%s小时前' % (delta // 3600)
-    if dalta < 604800:
-        return u'%s天前' % (delata // 86400)
+    if delta < 604800:
+        return u'%s天前' % (delta // 86400)
     dt = datetime.fromtimestamp(t)
     return u'%s年%s月%s日' % (dt.year, dt.month, dt.day)
 
 async def init(loop):
     await orm.create_pool(loop=loop, **configs.db)
     # 在handlers.py完全后，下面middlewares的list中加入auth_factory
-    app = web.Application(loop=loop, middlewares=[logger_factory, response_factory, auth_factory])
+    app = web.Application(loop=loop, middlewares=[logger_factory, auth_factory, response_factory])
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
     add_static(app)

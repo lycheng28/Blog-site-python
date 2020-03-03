@@ -2,7 +2,7 @@ import json, logging, inspect, functools
 
 # 建立page类处理分页， 可以在page_size更改每页项目的个数
 class Page(object):
-    def __init__(self,item_count, page_index=1, page_size=8):
+    def __init__(self, item_count, page_index=1, page_size=8):
         self.item_count = item_count
         self.page_size = page_size
         self.page_count = item_count // page_size + (1 if item_count % page_size > 0 else 0)

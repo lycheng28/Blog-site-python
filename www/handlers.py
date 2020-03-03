@@ -15,7 +15,7 @@ _COOKIE_KEY = configs.session.secret
 
 # 查看是否是管理员
 def check_admin(request):
-    if request.__user__ is None or not request.__user__.admin:
+    if request.__user__ is None or not request.__user__.admin: 
         raise APIPermissionError()
 
 # 获取页码信息
@@ -39,7 +39,7 @@ def user2cookie(user, max_age):
 
 # 文本转HTML
 def text2html(text):
-    lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&gt;'), filte(lambda s: s.strip() != '', text.split('\n')))
+    lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&gt;'), filter(lambda s: s.strip() != '', text.split('\n')))
     return ''.join(lines)
 
 # 解密cookie
@@ -51,7 +51,7 @@ async def cookie2user(cookie_str):
         if len(L) != 3:
             return None
         uid, expires, sha1 = L
-        if int(expires) < time.time()
+        if int(expires) < time.time():
             return None
         user = await User.find(uid)
         if user is None:
@@ -60,10 +60,15 @@ async def cookie2user(cookie_str):
         if sha1 != hashlib.sha1(s.encode('utf-8')).hexdigest():
             logging.info('invalid sha1')
             return None
+        user.passwd = '******'
+        return user
+    except Exception as e:
+        logging.exception(e)
+        return None
 
 # 处理首页URL
 @get('/')
-async def index(*, page='1')
+async def index(*, page='1'):
     page_index = get_page_index(page)
     num = await Blog.findNumber('count(id)')
     p = Page(num, page_index)
@@ -71,11 +76,11 @@ async def index(*, page='1')
         blogs = []
     else:
         blogs = await Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
-        return {
-            '__template__': 'blogs.html',
-            'page':p,
-            'blogs': blogs
-        }
+    return {
+        '__template__': 'blogs.html',
+        'page': p,
+        'blogs': blogs
+    }
 
 # 处理日志详情页URL
 @get('/blog/{id}')
@@ -96,6 +101,13 @@ async def get_blog(id):
 def register():
     return {
         '__template__': 'register.html'
+    }
+
+# 处理登录页面URL
+@get('/signin')
+def signin():
+    return {
+        '__template__': 'signin.html'
     }
 
 # 用户登录验证API
@@ -202,7 +214,7 @@ async def api_create_comment(id, request, *, content):
     blog = await Blog.find(id)
     if blog is None:
         raise APIResourceNotFoundError('blog')
-    comment = Comment(blog_id=blog.id, user_id=user.id, user_name=usesr.name, user_image=user.image, content=content.strip())
+    comment = Comment(blog_id=blog.id, user_id=user.id, user_name=user.name, user_image=user.image, content=content.strip())
     await comment.save()
     return comment
 
@@ -230,7 +242,7 @@ async def api_get_users(*, page='1'):
     return dict(page=p, users=users)
 
 # 定义EMAIL和HASH格式规范
-_RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+){1,4}$')
+_RE_EMAIL = re.compile(r'^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$')
 _RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
 
 # 用户注册API
@@ -240,7 +252,7 @@ async def api_register_user(*, email, name, passwd):
         raise APIValueError('name')
     if not email or not _RE_EMAIL.match(email):
         raise APIValueError('email')
-    if not passwd or nr not _RE_SHA1_match(passwd):
+    if not passwd or not _RE_SHA1.match(passwd):
         raise APIValueError('passwd')
     users = await User.findAll('email=?', [email])
     if len(users) > 0:
@@ -265,7 +277,7 @@ async def api_blogs(*, page='1'):
     p = Page(num, page_index)
     if num == 0:
         return dict(page=p, blogs=())
-    blogs = await Blog.findAll(orderBy='created_at desc', limit=(p.offser, p.limit))
+    blogs = await Blog.findAll(orderBy='created_at desc', limit=(p.offset, p.limit))
     return dict(page=p, blogs=blogs)
 
 # 获取日志详情API

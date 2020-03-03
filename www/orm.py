@@ -12,7 +12,7 @@ async def create_pool(loop, **kw):
         user=kw['user'],
         password=kw['password'],
         db=kw['db'],
-        charset=kw.get('charset', 'utf-8'),
+        charset=kw.get('charset', 'utf8'),
         autocommit=kw.get('autocommit', True),
         maxsize=kw.get('maxsize', 10),
         minsize=kw.get('minsize', 1),
@@ -22,7 +22,6 @@ async def create_pool(loop, **kw):
 # Select
 async def select(sql, args, size=None):
     log(sql, args)
-    global __pool
     with (await __pool) as conn:
         cur = await conn.cursor(aiomysql.DictCursor)
         await cur.execute(sql.replace('?', '%s'), args or())
@@ -48,11 +47,6 @@ async def execute(sql, args):
         return affected
 
 # 映射信息读取
-def create_args_string(num):
-    L = []
-    for n in range(num):
-        L.append('?')
-    return ', '.join(L)
 
 class ModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
@@ -102,7 +96,7 @@ class Model(dict, metaclass=ModelMetaclass):
     def __getattr__(self, key):
         try:
             return self[key]
-        except keyError:
+        except KeyError:
             raise AttributeError(r"'Model' object has no attribute '%s'" % key)
 
     def __setattr__(self, key, value):
@@ -156,10 +150,10 @@ class Model(dict, metaclass=ModelMetaclass):
         if where:
             sql.append('where')
             sql.append(where)
-        rs = await select(' ' , join(sql), args, 1)
+        rs = await select(' '.join(sql), args, 1)
         if len(rs) == 0:
             return None
-        return rs[0]['__num__']
+        return rs[0]['_num_']
 
     @classmethod
     async def find(cls, pk):
@@ -173,7 +167,7 @@ class Model(dict, metaclass=ModelMetaclass):
     async def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append(self.getValueOrDefault(self.priamry_key__))
-        rows = await execute(slef.__insert__, args)
+        rows = await execute(self.__insert__, args)
         if rows != 1:
             logging.warn('failed to insert record : affected rows: %s' % rows)
 
@@ -204,7 +198,7 @@ class Field(object):
 
 class StringField(Field):
     def __init__(self, name=None, primary_key=False, default=None, ddl='varchar(100)'):
-        super().__init__(name, 'bifint', primary_key, default)
+        super().__init__(name, ddl, primary_key, default)
 
 class BooleanField(Field):
     def __init__(self, name=None, default=False):
@@ -221,3 +215,9 @@ class FloatField(Field):
 class TextField(Field):
     def __init__(self, name=None, default=None):
         super().__init__(name,'text', False, default)
+
+def create_args_string(num):
+    L = []
+    for n in range(num):
+        L.append('?')
+    return ', '.join(L)

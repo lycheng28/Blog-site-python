@@ -2,7 +2,7 @@
 <!--继承父模板'__base__.html'-->
 {% extends '__base__.html' %}
 <!--jinja2 title 块内容替换-->
-{% block title %}Signin/登录{% endblock %}
+{% block title %}Signin/登陆{% endblock %}
 <!--jinja2 beforehead 块内容替换-->
 {% block beforehead %}
 <!--script中构建vue，向后端API提交登录验证信息数据-->
@@ -13,7 +13,7 @@ $(function() {
         el: '#vm',
         data: {
             email: '',
-            passwd: '',
+            passwd: ''
         },
         methods: {
             submit: function(event) {
@@ -43,7 +43,7 @@ $(function() {
 {% block content %}
     <div class="uk-grid">
     <div class="uk-width-1-1">
-        <h4>SIGNIN/欢迎登录! </h4>
+        <h4>SIGNIN/欢迎登陆! </h4>
         <form id="vm" v-on="submit: submit" class="uk-form-stacked">
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
             <div class="uk-margin-top">
@@ -61,7 +61,7 @@ $(function() {
                 </div>
             </div>
             <div class="uk-margin-top">
-                <button type="submit" class="uk-button uk-button-primary">SIGNIN/登录</button>
+                <button type="submit" class="uk-button uk-button-primary">SIGNIN/登陆</button>
             </div>
         </form>
     </div>
