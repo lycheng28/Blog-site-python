@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--处理分页导航栏代码-->
 {% macro pagination(page) %}
-    <u1 class="uk-pagination uk-flex-center uk-margin-medium-top uk-margin-large-bottom">
+    <ul class="uk-pagination uk-flex-center uk-margin-medium-top uk-margin-large-bottom">
         {% if page.has_previous %}
             <li><a href="?page={{ page.page_index - 1 }}"><span uk-pagination-previous></span></a></li>
         {% else %}
@@ -13,7 +13,7 @@
         {% else %}
         <li class="uk-disabled"><a href="#"><span uk-pagination-next></span></a></li>
         {% endif %}
-    </u1>
+    </ul>
 {% endmacro %}
 
 <!--导航页代码-->
@@ -25,18 +25,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=0.9,minimum-scale=0.9,maximun-scale=0.9,user-scalable=no">
     <meta name="wap-font-scale" content="no">
     <!--jinja2 meta块-->
-    {% block meta %}<!-- block meat -->{% endblock %}
+    {% block meta %}<!-- block meta -->{% endblock %}
     <!--jinja2 title块-->
     <title>{% block title %} ? {% endblock %}| AwesomeDavidBlog</title>
     <link rel="stylesheet" href="/static/css/uikit.min.css">
-    <link rel="styesheet" href="/static/css/awesome.css" />
+    <link rel="stylesheet" href="/static/css/uikit-rtl.min.css">
+    <link rel="stylesheet" href="/static/css/awesome.css" />
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/sha1.min.js"></script>
     <script src="/static/js/uikit.min.js"></script>
     <script src="/static/js/icons.min.js"></script>
     <script src="/static/js/sticky.min.js"></script>
     <script src="/static/js/vue.min.js"></script>
-    <script src="static/js/awesome.js"></script>
+    <script src="/static/js/awesome.js"></script>
     <!--jinja2 beforehead块-->
     {% block beforehead %}<!-- before head -->{% endblock %}
 </head>
@@ -47,40 +48,40 @@
     <!--uk-visible@m是大于中等尺寸屏幕时显示的ui-->
     <div class="uk-margin uk-visible@m" style="background-color:rgba(100,150,185,0);">
     <div class="uk-container uk-container-medium">
-        <!--导航栏UI-->
-        <nav class="uk-navber-container" uk-navbar style="background-color:rgba(255.255,255,0);">
-            <div class="uk-navbar-left uk-margin-medium-top uk-margin-medium-bottom">
-                <a class="uk-navbar-item uk-logo uk-margin-left" href="/">
-                    <!--此处uk-icon为图标，可选择自带icon亦可自定义icon重新打包-->
-                    <span class="uk-icon uk-margin-small-right" uk-icon="pagekit" ratio="2"></span>
-                    大胖
-                </a>
-                <ul class="uk-navbar-nav">
-                    <li><a href="/"> Article | 日志</a></li>
-                    <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
-                    <li><a href="/"> Landscape | 景观</a></li>
-                    <li><a href="/"> Coding | 编程</a></li>
-                </ul>
-            </div>
-            <div class="uk-navber-right uk-margin-medium-top uk-margin-medium-bottom">
-                <ul class="uk-navbar-nav">
-                    {% if __user__ %}
-                        <li>
-                            <a href="#0"> {{ __user__.name }}</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a href="/manage/"> Manage | 管理</a></li>
-                                    <li><a href="/signout"> Logout| 注销</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    {% else %}
-                        <li><a href="/signin"> Login |登录</a></li>
-                        <li><a href="/register"> Register | 注册</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </nav>
+    <!--导航栏UI-->
+    <nav class="uk-navbar-container" uk-navbar style="background-color:rgba(255,255,255,0);">
+        <div class="uk-navbar-left uk-margin-medium-top uk-margin-medium-bottom">
+            <a class="uk-navbar-item uk-logo uk-margin-left" href="/">
+                <!--此处uk-icon为图标，可选择自带icon亦可自定义icon重新打包-->
+                <span class="uk-icon uk-margin-small-right" uk-icon="pagekit" ratio="2"></span>
+                大胖
+            </a>
+            <ul class="uk-navbar-nav">
+                <li><a href="/"> Article | 日志</a></li>
+                <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
+                <li><a href="/"> Landscape | 景观</a></li>
+                <li><a href="/"> Coding | 编程</a></li>
+            </ul>
+        </div>
+        <div class="uk-navbar-right uk-margin-medium-top uk-margin-medium-bottom">
+            <ul class="uk-navbar-nav">
+            {% if __user__ %}
+                <li>
+                    <a href="#0"> {{ __user__.name }}</a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            <li><a href="/manage/"> Manage | 管理</a></li>
+                            <li><a href="/signout"> Logout| 注销</a></li>
+                        </ul>
+                    </div>
+                </li>
+            {% else %}
+                <li><a href="/signin"> Login |登录</a></li>
+                <li><a href="/register"> Register | 注册</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </nav>
     </div>
     </div>
 
@@ -94,26 +95,27 @@
         </div>
         <div class="uk-navbar-right">
             <ul class="uk-navbar-nav">
-                <li>
-                    <a class="uk-navbar-toggle" uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon></a>
-                    <div id="offcanvas-nav" uk-offcanvas="overlay: true; flip; true">
-                        <div class="uk-offcanvas-bar uk-flex uk-flex-column">
-                            <ul class="uk-nav uk-nav-default uk-margin-auto-vertical">
-                                <li><a href="/"> Article | 日志</a></li>
-                                <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
-                                <li><a href="/"> Landscape | 景观</a></li>
-                                <li><a href="/"> Coding | 编程</a></li>
-                                {% if __user__ %}
-                                <li><a href="/manage"> Manage | 管理</a></li>
-                                <li><a href="/signout"> Logout | 注销</a></li>
-                                {% else %}
-                                <li><a href="/signin"> Login | 登录</a></li>
-                                <li><a href="/register"> Register | 注册</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                </li>
+            <li>
+            <a class="uk-navbar-toggle" uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon></a>
+                    
+            <div id="offcanvas-nav" uk-offcanvas="overlay: true; flip: true">
+            <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+            <ul class="uk-nav uk-nav-default uk-margin-auto-vertical">
+                <li><a href="/"> Article | 日志</a></li>
+                <li><a href="https://aodabo.tech/tags/tutorial"> Tutorial | 教程</a></li>
+                <li><a href="/"> Landscape | 景观</a></li>
+                <li><a href="/"> Coding | 编程</a></li>
+                {% if __user__ %}
+                <li><a href="/manage/comments"> Manage | 管理</a></li>
+                <li><a href="/signout"> Logout | 注销</a></li>
+                {% else %}
+                <li><a href="/signin"> Login | 登录</a></li>
+                <li><a href="/register"> Register | 注册</a></li>
+                {% endif %}
+            </ul>
+            </div>
+            </div>
+            </li>
             </ul>
         </div>
     </nav>
@@ -126,17 +128,18 @@
 
     <!--页面底部图标栏和网站信息-->
     <div class="uk-margin-medium">
-        <div class="uk-container uk-container-center uk-text-center">
-            <p>
-                <a target="_blank" href="https://github.com/lycheng28" class="uk-icon-buttom uk-margin-small-small" ratio="1.1" uk-icon="github"></a>
-                <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="instageram"></a>
-                <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="twitter"></a>
-                <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="google-plus"></a>
-                <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="linkedin"></a>
-            </p>
-            <p class="uk-text-meta" style="line-height: 10px; padding: 10px 0; margin: 8px 0;">Powered by <a href="https://aodabo.tech">AwesomeDavidBlog!</a> Copyright @ 2018.</p>
-            <p class="uk-text-meta" style="line-height: 0px; padding: 0px 0; margin: 0px 0;"><a href="https://aodabo.tech/" target="_blank">Zhiyuan Yang</a>. All rights reserved</p>
-        </div>
+    <div class="uk-container uk-container-center uk-text-center">
+        <p>
+            <a target="_blank" href="https://github.com/lycheng28" class="uk-icon-buttom uk-margin-small-small" ratio="1.1" uk-icon="github"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="instageram"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="twitter"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.2" uk-icon="google-plus"></a>
+            <a target="_blank" href="#" class="uk-icon-button uk-margin-small-right" ratio="1.1" uk-icon="linkedin"></a>
+        </p>
+        <p class="uk-text-meta" style="line-height: 10px; padding: 10px 0; margin: 8px 0;">Powered by <a href="https://aodabo.tech">AwesomeDavidBlog!</a> Copyright @ 2018.</p>
+        <p class="uk-text-meta" style="line-height: 0px; padding: 0px 0; margin: 0px 0;"><a href="https://aodabo.tech/" target="_blank">Zhiyuan Yang</a>. All rights reserved</p>
     </div>
+    </div>
+    
 </body>
 </html>

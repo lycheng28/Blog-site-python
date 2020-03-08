@@ -1,10 +1,10 @@
-<!--继承父模板 '__base__.html'-->
+<!-- 继承父模板 '__base__.html' -->
 {% extends '__base__.html' %}
 <!--jinja2 title 块内容替换-->
-{% block title %}评论{% endlock %}
+{% block title %}评论{% endblock %}
 <!--jinja2 beforehead 块内容替换-->
 {% block beforehead %}
-<!--script中构建vue，向后端API提交评论管理操作相关数据-->
+<!--script中构建vue,向后端API提交评论管理操作相关数据-->
 <script>
 
 function initVM(data) {
@@ -17,14 +17,14 @@ function initVM(data) {
         },
         methods: {
             previous: function () {
-                gotopage(this.page.page_index - 1);
+                gotoPage(this.page.page_index - 1);
             },
             next: function () {
-                gotopage(this.page.page_index + 1);
+                gotoPage(this.page.page_index + 1);
             },
             delete_comment: function (comment) {
-                var content = comment.content.length > 20 ? commtent.substring(0, 20) + '...' : comment.content;
-                if (confirm('确认要删除评论“' + comment.content + '”?删除后不可恢复！')) {
+                var content = comment.content.length > 20 ? comment.content.substring(0, 20) + '...' : comment.content;
+                if (confirm('确认要删除评论“' + comment.content + '”？删除后不可恢复！')) {
                     postJSON('/api/comments/' + comment.id + '/delete', function (err, r) {
                         if (err) {
                             return error(err);
@@ -37,7 +37,7 @@ function initVM(data) {
     });
 }
 
-$(function () {
+$(function() {
     getJSON('/api/comments', {
         page: {{ page_index }}
     }, function (err, results) {
@@ -68,21 +68,21 @@ $(function () {
     </div>
 
     <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载....</span>
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
     </div>
 
     <div id="vm" class="uk-width-1-1">
         <table class="uk-table uk-table-justify uk-table-divider">
-            <table>
+            <thead>
                 <tr>
                     <th class="uk-text-left uk-width-small">作者</th>
                     <th class="uk-text-left">内容</th>
-                    <th class="uk-text-left uk-table-expand">创作时间</th>
+                    <th class="uk-text-left uk-table-expand">创建时间</th>
                     <th class="uk-text-left uk-width-small">操作</th>
                 </tr>
-            </table>
+            </thead>
             <tbody>
-                <tr v-repeat="comment: comments">
+                <tr v-repeat="comment: comments" >
                     <td>
                         <span v-text="comment.user_name"></span>
                     </td>
@@ -97,7 +97,7 @@ $(function () {
                     </td>
                 </tr>
             </tbody>
-        </table> 
+        </table>
         <div class="uk-width-1-1 uk-text-center">
         <ul class="uk-pagination">
             <li v-if="! page.has_previous" class="uk-disabled"><span><i uk-icon="chevron-left"></i></span></li>
@@ -105,9 +105,7 @@ $(function () {
             <li class="uk-active"><span v-text="page.page_index"></span></li>
             <li v-if="! page.has_next" class="uk-disabled"><span><i uk-icon="chevron-right"></i></span></li>
             <li v-if="page.has_next"><a v-on="click: next()" href="#0"><i uk-icon="chevron-right"></i></a></li>
-        </ul>    
-        </div>   
+        </ul>
+        </div>
     </div>
 {% endblock %}
-
-

@@ -69,7 +69,7 @@ async def data_factory(app, handler):
                 logging.info('request json: %s' % str(request.__data__))
             elif request.content_type.startswith('application/x-www-form-urlencoded'):
                 request.__data__ = await request.post()
-                logging.info('request form: %s' % str(request.__data___))
+                logging.info('request form: %s' % str(request.__data__))
         return (await handler(request))
     return parse_data
 
@@ -93,7 +93,7 @@ async def response_factory(app, handler):
         if isinstance(r, dict):
             template = r.get('__template__')
             if template is None:
-                resp = web.Response(body=json.dumps(r, ensure_ascii=False, default=lambda o : o.__dict__).encode('utf-8'))
+                resp = web.Response(body=json.dumps(r, ensure_ascii=False, default=lambda o: o.__dict__).encode('utf-8'))
                 resp.content_type = 'application/json;charset=utf-8'
                 return resp
             else:
@@ -136,7 +136,7 @@ async def init(loop):
     add_routes(app, 'handlers')
     add_static(app)
     srv = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)
-    logging.info('server started at http://127.0.0.1:9000....')
+    logging.info('server started at http://127.0.0.1:9000...')
     return srv
 
 loop = asyncio.get_event_loop()

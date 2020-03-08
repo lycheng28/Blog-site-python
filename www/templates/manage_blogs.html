@@ -1,10 +1,10 @@
-<!--继承父模板 '__base__.html'-->
+<!-- 继承父模板 '__base__.html' -->
 {% extends '__base__.html' %}
 <!--jinja2 title 块内容替换-->
 {% block title %}日志{% endblock %}
 <!--jinja2 beforehead 块内容替换-->
 {% block beforehead %}
-<!--script中构建vue，向后端API提交日志管理操作相关数据-->
+<!--script中构建vue,向后端API提交日志管理操作相关数据-->
 <script>
 
 function initVM(data) {
@@ -25,7 +25,7 @@ function initVM(data) {
                 location.assign('/manage/blogs/edit?id=' + blog.id);
             },
             delete_blog: function (blog) {
-                if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复!')) {
+                if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
                     postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
                         if (err) {
                             return alert(err.message || err.error || err);
@@ -39,10 +39,10 @@ function initVM(data) {
     $('#vm').show();
 }
 
-$(function () {
+$(function() {
     getJSON('/api/blogs', {
         page: {{ page_index }}
-    }, function (err, results){
+    }, function (err, results) {
         if (err) {
             return fatal(err);
         }
@@ -65,17 +65,18 @@ $(function () {
             <li><a href="/manage/users">用户</a></li>
         </ul>
     </div>
-    
-    <div id="error" class="uk-width-1-1"></div>
-    
+
+    <div id="error" class="uk-width-1-1">
+    </div>
+
     <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>正在加载...</span>
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
     </div>
 
     <div id="vm" class="uk-width-1-1">
         <a href="/manage/blogs/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i> 新日志</a>
-        
-        <table class="uk-table uk-table-divider">    
+
+        <table class="uk-table uk-table-divider">
             <thead>
                 <tr>
                     <th class="uk-table-expand uk-text-left"> 标题</th>
@@ -86,15 +87,15 @@ $(function () {
                 </tr>
             </thead>
             <tbody>
-                <tr v-repeat="blog: blogs">
+                <tr v-repeat="blog: blogs" >
                     <td>
-                        <a target="_blank" v-attr="href: '/blog/' + blog.id" v-text="blog.name"></a>
+                        <a target="_blank" v-attr="href: '/blog/'+blog.id" v-text="blog.name"></a>
                     </td>
                     <td>
-                        <a target="_blank" v-attr="href: '/user/' + blog.user_id" v-text="blog.user_name"></a>
+                        <a target="_blank" v-attr="href: '/user/'+blog.user_id" v-text="blog.user_name"></a>
                     </td>
                     <td>
-                        <a target="_blank" v-attr="href: '/user/' + blog.tag" v-text="blog.tag"></a>
+                        <a target="_blank" v-attr="href: '/blogs/'+blog.tag" v-text="blog.tag"></a>
                     </td>
                     <td>
                         <span v-text="blog.created_at.toDateTime()"></span>

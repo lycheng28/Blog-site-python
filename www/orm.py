@@ -24,7 +24,7 @@ async def select(sql, args, size=None):
     log(sql, args)
     with (await __pool) as conn:
         cur = await conn.cursor(aiomysql.DictCursor)
-        await cur.execute(sql.replace('?', '%s'), args or())
+        await cur.execute(sql.replace('?', '%s'), args or ())
         if size:
             rs = await cur.fetchmany(size)
         else:
@@ -166,10 +166,10 @@ class Model(dict, metaclass=ModelMetaclass):
     # 实例方法
     async def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
-        args.append(self.getValueOrDefault(self.priamry_key__))
+        args.append(self.getValueOrDefault(self.__primary_key__))
         rows = await execute(self.__insert__, args)
         if rows != 1:
-            logging.warn('failed to insert record : affected rows: %s' % rows)
+            logging.warn('failed to insert record: affected rows: %s' % rows)
 
     async def update(self):
         args = list(map(self.getValue, self.__fields__))
@@ -180,7 +180,7 @@ class Model(dict, metaclass=ModelMetaclass):
 
     async def remove(self):
         args = [self.getValue(self.__primary_key__)]
-        rows = await execte(self.__delete__, args)
+        rows = await execute(self.__delete__, args)
         if rows != 1:
             logging.warn('failed to remove by primary key: affected rows: %s' % rows)
 

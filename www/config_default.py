@@ -1,8 +1,9 @@
 # config_default.py 本地测试
 
+
 configs = {
-    'debug' : True,
-    'db' : {
+    'debug': True,
+    'db': {
         'host': '127.0.0.1',
         'port': 3306,
         'user': 'www-data',

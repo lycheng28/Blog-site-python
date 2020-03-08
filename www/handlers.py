@@ -39,7 +39,7 @@ def user2cookie(user, max_age):
 
 # 文本转HTML
 def text2html(text):
-    lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&gt;'), filter(lambda s: s.strip() != '', text.split('\n')))
+    lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'), filter(lambda s: s.strip() != '', text.split('\n')))
     return ''.join(lines)
 
 # 解密cookie
@@ -116,7 +116,7 @@ async def authenticate(*, email, passwd):
     if not email:
         raise APIValueError('email', 'Invalid email.')
     if not passwd:
-        raise APIValueError('passwd', 'Invalid password')
+        raise APIValueError('passwd', 'Invalid password.')
     users = await User.findAll('email=?', [email])
     if len(users) == 0:
         raise APIValueError('email', 'Email not exist.')
@@ -127,7 +127,7 @@ async def authenticate(*, email, passwd):
     sha1.update(b':')
     sha1.update(passwd.encode('utf-8'))
     if user.passwd != sha1.hexdigest():
-        raise APIValueError('passwd', 'Invalid password')
+        raise APIValueError('passwd', 'Invalid password.')
     # authenticate ok, set cookie
     r = web.Response()
     r.set_cookie(COOKIE_NAME, user2cookie(user, 86400), max_age=86400, httponly=True)
@@ -137,7 +137,7 @@ async def authenticate(*, email, passwd):
     return r
 
 # 用户注销
-@get('/signot')
+@get('/signout')
 def signout(request):
     referer = request.headers.get('Referer')
     r = web.HTTPFound(referer or '/')
@@ -148,7 +148,7 @@ def signout(request):
 # 获取管理页面
 @get('/manage/')
 def manage():
-    return 'redireect:/manage/comments'
+    return 'redirect:/manage/comments'
 
 # 评论管理页面
 @get('/manage/comments')
@@ -188,7 +188,7 @@ def manage_edit_blog(*, id):
 @get('/manage/users')
 def manage_users(*, page='1'):
     return {
-        '__template': 'manage_users.html',
+        '__template__': 'manage_users.html',
         'page_index': get_page_index(page)
     }
 
@@ -213,7 +213,7 @@ async def api_create_comment(id, request, *, content):
         raise APIValueError('content')
     blog = await Blog.find(id)
     if blog is None:
-        raise APIResourceNotFoundError('blog')
+        raise APIResourceNotFoundError('Blog')
     comment = Comment(blog_id=blog.id, user_id=user.id, user_name=user.name, user_image=user.image, content=content.strip())
     await comment.save()
     return comment
@@ -256,16 +256,16 @@ async def api_register_user(*, email, name, passwd):
         raise APIValueError('passwd')
     users = await User.findAll('email=?', [email])
     if len(users) > 0:
-        raise APIErorr('register:failed', 'email', 'Email is already in use')
+        raise APIError('register:failed', 'email', 'Email is already in use')
     uid = next_id()
     sha1_passwd = '%s:%s' % (uid, passwd)
-    user = User(id=uid, name=name.strip(), email=email, passwd=hashlib.sha1(sha1_passwd.encode('utf-8')).hexdigest(), image='httphttp://www.gravatar.com/avatar/%s?d=mm&s=120' % hashlib.md5(email.encode('utf-8')).hexdigest())
+    user = User(id=uid, name=name.strip(), email=email, passwd=hashlib.sha1(sha1_passwd.encode('utf-8')).hexdigest(), image='http://www.gravatar.com/avatar/%s?d=mm&s=120' % hashlib.md5(email.encode('utf-8')).hexdigest())
     await user.save()
     # make session cookie
     r = web.Response()
     r.set_cookie(COOKIE_NAME, user2cookie(user, 86400), max_age=86400, httponly=True)
     user.passwd = '******'
-    r.content_typr = 'application/json'
+    r.content_type = 'application/json'
     r.body = json.dumps(user, ensure_ascii=False).encode('utf-8')
     return r
 
@@ -335,7 +335,7 @@ async def api_delete_users(id, request):
         raise APIResourceNotFoundError('Comment')
     await user.remove()
     # 给删除的用户在评论中标记
-    comments = await Comment.findAll('user_id=?', {id})
+    comments = await Comment.findAll('user_id=?', [id])
     if comments:
         for comment in comments:
             id = comment.id
