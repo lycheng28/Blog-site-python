@@ -21,9 +21,9 @@ _REMOTe_BASE_DIR = '/srv/awesome'
 def deploy():
     newdir = 'www-%s' % datetime.now().strftime('%y-%m-%d_%H.%M.%S')
     # 删除现有的tar文件
-    run('rm -f %s' % _REMOTE_TMP_tAR)
+    run('rm -f %s' % _REMOTE_TMP_TAR)
     # 上传新的tar文件
-    put('dist/%s' % _TAR_FLIE, _REMOTE_TMP_TAR)
+    put('dist/%s' % _TAR_FILE, _REMOTE_TMP_TAR)
     # 创建新目录
     with cd(_REMOTE_DIR):
         sudo('mkdir %s' % newdir)
